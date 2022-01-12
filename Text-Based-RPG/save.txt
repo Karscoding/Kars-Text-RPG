@@ -1,2 +1,1 @@
-Name : kars
-Gender : 1
+
