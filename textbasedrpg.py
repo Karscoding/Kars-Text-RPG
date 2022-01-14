@@ -1,13 +1,10 @@
 import time
 import os
 import sys
+import linecache
 from os import path
 #Variables
-if path.exists('save.txt'):
-    readFile = open('save.txt', 'r')
-    print('exists')
-    if 'Name' in readFile.read():
-        previousSaves = True
+
 previousSaves = False
 newGame = False
 continueGame = False
@@ -21,7 +18,12 @@ characterName = 'null'
 characterGender = 'null'
 savedName = 'null'
 endofVillage = False
-
+if path.exists('save.txt'):
+    readFile = open('save.txt', 'r')
+    print('exists')
+    if 'Name' in readFile.read():
+        previousSaves = True
+        content = readFile.readlines()
 
 #Functions
 def exitCheck():
@@ -55,7 +57,6 @@ def speedrunMode():
    sleepWaitMedium = 0
    sleepWaitShort = 0
    print('Returning to Menu...\n')
-   time.sleep(3)
    menuFunction()
 
 
@@ -172,7 +173,7 @@ if newGame == True:
         userInput = input()
         exitCheck()
         healthCheck()
-        if userInput == 'yes' or userInput == 'Yes':
+        if userInput == 'yes' or userInput == 'Yes' or userInput == 'y' or userInput == 'Y' or userInput == '1':
             print("\nYou walk towards the village")
             time.sleep(sleepWaitShort)
             print("Your legs start hurting")
@@ -188,7 +189,7 @@ if newGame == True:
             healthCheck()
             treeRest = True
             while treeRest:
-                if userInput == 'yes' or userInput == 'Yes':
+                if userInput == 'yes' or userInput == 'Yes' or userInput == 'y' or userInput == 'Y' or userInput == '1':
                     print('\nYou sit down underneath a tree')
                     time.sleep(sleepWaitShort)
                     print('Nice and dry')
@@ -213,7 +214,7 @@ if newGame == True:
                     time.sleep(sleepWaitMedium)
                     personHelped = True
                     treeRest = False
-                elif userInput == 'no' or userInput == 'No':
+                elif userInput == 'no' or userInput == 'No' or userInput == 'n' or userInput == 'N' or userInput == '2':
                     print('\nYou keep walking')
                     time.sleep(sleepWaitShort)
                     print('After another 500 meters you fall onto your knees')
@@ -228,7 +229,7 @@ if newGame == True:
                     print('Please type Yes or No')
                     treeRest = True
             villageQ = False
-        elif userInput == 'no' or userInput == 'No':
+        elif userInput == 'no' or userInput == 'No' or userInput == 'n' or userInput == 'N' or userInput == '2':
             print("\nYou decide against going to the village and take shelter under a big rock")
             time.sleep(sleepWaitMedium)
             print("This is a pretty nice place to stay dry for now")
@@ -257,7 +258,7 @@ if newGame == True:
                userInput = input()
                exitCheck()
                healthCheck()
-               if userInput == 'attack' or userInput == 'Attack':
+               if userInput == 'attack' or userInput == 'Attack' or userInput == 'a' or userInput == 'A' or userInput == '1':
                   print('\nYou attempt an attack')
                   time.sleep(sleepWaitShort)
                   print('You fail to realize the Bear is way stronger')
@@ -269,7 +270,7 @@ if newGame == True:
                   print(' - That was a bad Choice - ')
                   time.sleep(sleepWaitMedium)
                   gameOver()
-               elif userInput == 'run':
+               elif userInput == 'run' or userInput == 'Run' or userInput == 'r' or userInput == 'R' or userInput == '2':
                   print('\nYou run as fast as you can')
                   time.sleep(sleepWaitShort)
                   print('But the Bear is faster')
@@ -283,7 +284,7 @@ if newGame == True:
                   print(' - Wasnt the best Choice but you survived - ')
                   time.sleep(sleepWaitMedium)
                   bearQuestion = False
-               elif userInput == 'nothing':
+               elif userInput == 'nothing' or userInput == 'Nothing' or userInput == 'n' or userInput == 'N' or userInput == '3':
                   print('\nYou stand still as you stare him down')
                   time.sleep(sleepWaitShort)
                   print('The Bear looks confused and walks away into the bushes')
@@ -322,7 +323,7 @@ if newGame == True:
     userInput = input()
     exitCheck()
     healthCheck()
-    if userInput == 'yes' or userInput == 'Yes':
+    if userInput == 'yes' or userInput == 'Yes' or userInput == 'y' or userInput == 'Y' or userInput == '1':
         print('The Person nods and goes to make coffee')
         time.sleep(sleepWaitShort)
         print('"Was this the right choice? To follow someone into their home?" You ask yourself')
@@ -385,29 +386,84 @@ if newGame == True:
     writeFile = open('save.txt', 'w')
     writeFile.write('Name : ' + characterName)
     writeFile.write('\nGender : ' + characterGender)
-    writeFile.write('\n' + introComplete)
+    writeFile.write('\n' + introComplete + '\n')
+    writeFile.write(str(health))
     writeFile.close()
 
 if continueGame == True:
     print()
     print()
     with open('save.txt', 'r') as Readfile:
-        savedName = Readfile.readline()
-        characterName = savedName[7:]
-        savedGender = Readfile.readline(1)[9:]
-        savedIntro = Readfile.readline(2)
+        savedName = linecache.getline('save.txt', 1)
+        characterName = savedName[7:].rstrip()
+        savedGender = linecache.getline('save.txt',2)
+        characterGender = savedGender[9:].rstrip()
+        savedIntro = linecache.getline('save.txt',3)
+        introComplete = savedIntro.rstrip()
+        savedHealth = linecache.getline('save.txt',4)
+        health = savedHealth.rstrip()
         time.sleep(2)
-    if int(savedGender) == 1:
-        characterGender = 'Male'
-    elif int(savedGender) == 2:
-        characterGender = 'Female'
-    elif int(savedGender) == 3:
-        characterGender = 'Other'
+        
     
     print('This is a test to showcase Saves\n')
-    print(savedIntro)
     print('Your name is :', characterName)
     print('Your gender is :', characterGender)
+    print('Your current health is :', health)
+    print('introComplete is set to :', introComplete)
+    print('\n - Loading Saved Game -')
+    time.sleep(3)
+    if introComplete == '1':
+        print('\n\n\n - The Guest Room - ')
+        time.sleep(2)
+
+if introComplete == '1':
+    print('\n\n\n')
+    print('The Person : "Ill leave you be in your new room, you should probably get some sleep so ill see you tomorrow."')
+    time.sleep(sleepWaitLong)
+    print('You sit on the bed, its nice and soft')
+    time.sleep(sleepWaitShort)
+    print('You decide to lay down and get some sleep')
+    time.sleep(sleepWaitShort)
+    print('\n------------------------------------------')
+    time.sleep(0.2)
+    print('       You daze away into the night       ')
+    time.sleep(0.2)
+    print('         Your current health : ', health,'         ')
+    time.sleep(0.2)
+    print('                Goodnight                 ')
+    time.sleep(0.2)
+    print('------------------------------------------\n')
+    time.sleep(sleepWaitMedium)
+    sleepZs = 'z'
+    sleepZamount = 0
+    for x in range (0, 25):
+        print('z' + sleepZs * sleepZamount, '\n')
+        time.sleep(0.5)
+        sleepZamount += 1
+    print('--------------------------')
+    for x in range (0,10):
+        print()
+        time.sleep(0.1)
+    time.sleep(sleepWaitShort)
+    print('A bright light hurts your eyes')
+    time.sleep(sleepWaitShort)
+    print('You wake up and see the sun shining into your eyes through the window')
+    time.sleep(sleepWaitShort)
+    print('You get out of bed and leave the room')
+    time.sleep(sleepWaitShort)
+    print('Person : "Goodmorning, I was waiting for you to wake up"')
+    time.sleep(sleepWaitMedium)
+    print('Person : "I just wanted to explain to you more whats going on and where you are"')
+    time.sleep(sleepWaitMedium)
+    print('Person : "First of all my name is Gyovo, I forgot to tell you that yesterday"')
+    time.sleep(sleepWaitMedium)
+    print('Gyovo : "So considering that you dont seem to remember where you are or whats happening I wanna explain to you some stuff."')
+    time.sleep(sleepWaitLong)
+    print('Gyovo : "We live in a world with Dragons"')
+    time.sleep(sleepWaitMedium)
+    print('Gyovo : "These Dragons make it very hard for us to survive and because of that you are lucky to have made it to this village in one piece"')
+    time.sleep(sleepWaitLong)
+    
     
       
 #Outro
